@@ -1,33 +1,33 @@
 <?php
-     function getListsForUser($user) {
-          global $CONFIG;
-          global $SECRETS;
-          global $PATH;
-          
-          if ($CONFIG['DEBUG_MODE']) {
-               $url = $PATH.'/../data/sample/149789344-lists.json';
-          } else {
-               $url = 'https://api.foursquare.com/v2/users/'.$user.'/lists?oauth_token='.$SECRETS['FOURSQUARE']['O_AUTH_TOKEN'].'&group=created&v=20221022&limit=200';
-          }
+    function getListsForUser($user) {
+        global $CONFIG;
+        global $SECRETS;
+        global $PATH;
 
-          $curl = curl_init();
+        if ($CONFIG['DEBUG_MODE']) {
+            $url = $PATH.'/../data/sample/149789344-lists.json';
+        } else {
+            $url = 'https://api.foursquare.com/v2/users/'.$user.'/lists?oauth_token='.$SECRETS['FOURSQUARE']['O_AUTH_TOKEN'].'&group=created&v=20221022&limit=200';
+        }
 
-          curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-          curl_setopt($curl, CURLOPT_URL, $url);
-           
-          $response = curl_exec($curl);
+        $curl = curl_init();
 
-          $json = json_decode($response, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_URL, $url);
 
-          $lists = [];
+        $response = curl_exec($curl);
 
-          foreach ($json['response']['lists']['items'] as $list) {
-               array_push($lists, Array(
-                    'name' => $list['name'],
-                    'id' => $list['id']
-               ));
-          }
+        $json = json_decode($response, true);
 
-          return $lists;
-     }
+        $lists = [];
+
+        foreach ($json['response']['lists']['items'] as $list) {
+            array_push($lists, Array(
+                'name' => $list['name'],
+                'id' => $list['id']
+            ));
+        }
+
+        return $lists;
+    }
 ?>

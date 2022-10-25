@@ -1,0 +1,4 @@
+<Files todaysTransactions.txt>
+	order allow,deny
+	Deny from all
+</Files>

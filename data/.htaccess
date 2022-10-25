@@ -1,4 +1,4 @@
-<Files todaysTransactions.txt>
+<Files transactions.txt>
 	order allow,deny
 	Deny from all
 </Files>

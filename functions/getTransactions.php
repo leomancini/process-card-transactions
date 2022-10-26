@@ -104,7 +104,7 @@
         global $PATH;
 
         $bestMatchLocation = getLocationsForMerchant($transaction['merchant'])[0];
-        
+
         if (is_null($bestMatchLocation['lists'])) {
             $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
         }
@@ -116,7 +116,9 @@
             'time' => $transaction['datetime']->format('G:i'),
             'card' => $transaction['card'],
             'bestMatchLocation' => $bestMatchLocation,
-            'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$transaction['amount'].'&description='.urlencode($transaction['merchant']).'&datetimeFormatted='.urlencode($transaction['datetime']->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
+            'actions' => [
+                'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$transaction['amount'].'&description='.urlencode($transaction['merchant']).'&datetimeFormatted='.urlencode($transaction['datetime']->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
+            ]
         );
     }
 ?>

@@ -53,7 +53,7 @@
             }
 
             $message .= '&nbsp;&nbsp;&nbsp;';
-            $message .= '&#128184; <a href="'.$transaction['addToSplitwise'].'">Add to Splitwise</a>';
+            $message .= '&#128184; <a href="'.$transaction['actions']['addToSplitwise'].'">Add to Splitwise</a>';
             $message .= '<br><br>';
         }
 

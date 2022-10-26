@@ -117,7 +117,8 @@
             'card' => $transaction['card'],
             'bestMatchLocation' => $bestMatchLocation,
             'actions' => [
-                'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$transaction['amount'].'&description='.urlencode($transaction['merchant']).'&datetimeFormatted='.urlencode($transaction['datetime']->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
+                'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$transaction['amount'].'&description='.urlencode($transaction['merchant']).'&datetimeFormatted='.urlencode($transaction['datetime']->format('F j, Y \a\t g:i A')).'&password='.$_GET['password'],
+                'addToIgnoreList' => $PATH.'/../actions/addToIgnoreList?merchant='.urlencode($transaction['merchant']).'&password='.$_GET['password']
             ]
         );
     }

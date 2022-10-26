@@ -2,3 +2,8 @@
 	order allow,deny
 	Deny from all
 </Files>
+
+<Files ignore.txt>
+	order allow,deny
+	Deny from all
+</Files>

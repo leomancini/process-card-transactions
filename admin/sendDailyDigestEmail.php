@@ -54,6 +54,8 @@
 
             $message .= '&nbsp;&nbsp;&nbsp;';
             $message .= '&#128184; <a href="'.$transaction['actions']['addToSplitwise'].'">Add to Splitwise</a>';
+            $message .= '&nbsp;&nbsp;&nbsp;';
+            $message .= '&#10060; <a href="'.$transaction['actions']['addToIgnoreList'].'">Ignore this merchant</a>';
             $message .= '<br><br>';
         }
 

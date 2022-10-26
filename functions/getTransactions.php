@@ -68,60 +68,54 @@
             if ($line !== '') {
                 $elements = explode(';', $line);
 
-                $merchant = $elements[0];
-                $amount = floatval($elements[1]);
+                $transaction = [];
+                $transaction['merchant'] = $elements[0];
+                $transaction['amount'] = floatval($elements[1]);
                 $date = $elements[2];
                 $time = $elements[3];
-                $card = $elements[4];
+                $transaction['card'] = $elements[4];
 
-                $datetime = new DateTime();
+                $transaction['datetime'] = new DateTime();
 
                 if (strpos($time, ' ET') !== false) {
                     $time = str_replace(' ET', '', $time);
                 } else {
-                    $datetime->setTimezone(new DateTimeZone('America/New_York'));
+                    $transaction['datetime']->setTimezone(new DateTimeZone('America/New_York'));
                 }
 
-                $datetime->setTimestamp(strtotime($date.' '.$time));
+                $transaction['datetime']->setTimestamp(strtotime($date.' '.$time));
 
-                if (!in_array(strtoupper($merchant), $ignoreMerchants)) {
+                if (!in_array(strtoupper($transaction['merchant']), $ignoreMerchants)) {
                     if ($dateFilter) {
                         if ($dateFilter === $datetime->format('Y-m-d')) {
-                            $bestMatchLocation = getLocationsForMerchant($merchant)[0];
-                            if (is_null($bestMatchLocation['lists'])) {
-                                $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
-                            }
-
-                            array_push($transactions, Array(
-                                'merchant' => $merchant,
-                                'amount' => $amount,
-                                'date' => $datetime->format('Y-m-d'),
-                                'time' => $datetime->format('G:i'),
-                                'card' => $card,
-                                'bestMatchLocation' => $bestMatchLocation,
-                                'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$amount.'&description='.urlencode($merchant).'&datetimeFormatted='.urlencode($datetime->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
-                            ));
+                            array_push($transactions, formatTransaction($transaction));
                         }
                     } else {
-                        $bestMatchLocation = getLocationsForMerchant($merchant)[0];
-                        if (is_null($bestMatchLocation['lists'])) {
-                            $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
-                        }
-
-                        array_push($transactions, Array(
-                            'merchant' => $merchant,
-                            'amount' => $amount,
-                            'date' => $datetime->format('Y-m-d'),
-                            'time' => $datetime->format('G:i'),
-                            'card' => $card,
-                            'bestMatchLocation' => $bestMatchLocation,
-                            'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$amount.'&description='.urlencode($merchant).'&datetimeFormatted='.urlencode($datetime->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
-                        ));
+                        array_push($transactions, formatTransaction($transaction));
                     }
                 }
             }
         }
         
         return $transactions;
+    }
+
+    function formatTransaction($transaction) {
+        global $PATH;
+
+        $bestMatchLocation = getLocationsForMerchant($transaction['merchant'])[0];
+        if (is_null($bestMatchLocation['lists'])) {
+            $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
+        }
+
+        return Array(
+            'merchant' => $transaction['merchant'],
+            'amount' => $transaction['amount'],
+            'date' => $transaction['datetime']->format('Y-m-d'),
+            'time' => $transaction['datetime']->format('G:i'),
+            'card' => $transaction['card'],
+            'bestMatchLocation' => $bestMatchLocation,
+            'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$transaction['amount'].'&description='.urlencode($transaction['merchant']).'&datetimeFormatted='.urlencode($transaction['datetime']->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
+        );
     }
 ?>

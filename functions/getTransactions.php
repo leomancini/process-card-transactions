@@ -54,6 +54,16 @@
         $data = explode("\n", $dataFile);
         $transactions = [];
 
+        $ignoreFile = file_get_contents($CONFIG['IGNORE_FILE'], true);
+        $ignore = explode("\n", $ignoreFile);
+        $ignoreMerchants = [];
+
+        foreach ($ignore as $line) {
+            if ($line !== '') {
+                array_push($ignoreMerchants, strtoupper($line));
+            }
+        }
+
         foreach ($data as $line) {
             if ($line !== '') {
                 $elements = explode(';', $line);
@@ -74,8 +84,25 @@
 
                 $datetime->setTimestamp(strtotime($date.' '.$time));
 
-                if ($dateFilter) {
-                    if ($dateFilter === $datetime->format('Y-m-d')) {
+                if (!in_array(strtoupper($merchant), $ignoreMerchants)) {
+                    if ($dateFilter) {
+                        if ($dateFilter === $datetime->format('Y-m-d')) {
+                            $bestMatchLocation = getLocationsForMerchant($merchant)[0];
+                            if (is_null($bestMatchLocation['lists'])) {
+                                $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
+                            }
+
+                            array_push($transactions, Array(
+                                'merchant' => $merchant,
+                                'amount' => $amount,
+                                'date' => $datetime->format('Y-m-d'),
+                                'time' => $datetime->format('G:i'),
+                                'card' => $card,
+                                'bestMatchLocation' => $bestMatchLocation,
+                                'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$amount.'&description='.urlencode($merchant).'&datetimeFormatted='.urlencode($datetime->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
+                            ));
+                        }
+                    } else {
                         $bestMatchLocation = getLocationsForMerchant($merchant)[0];
                         if (is_null($bestMatchLocation['lists'])) {
                             $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
@@ -91,21 +118,6 @@
                             'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$amount.'&description='.urlencode($merchant).'&datetimeFormatted='.urlencode($datetime->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
                         ));
                     }
-                } else {
-                    $bestMatchLocation = getLocationsForMerchant($merchant)[0];
-                    if (is_null($bestMatchLocation['lists'])) {
-                        $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
-                    }
-
-                    array_push($transactions, Array(
-                        'merchant' => $merchant,
-                        'amount' => $amount,
-                        'date' => $datetime->format('Y-m-d'),
-                        'time' => $datetime->format('G:i'),
-                        'card' => $card,
-                        'bestMatchLocation' => $bestMatchLocation,
-                        'addToSplitwise' => $PATH.'/../actions/addAmountToSplitwise?amount='.$amount.'&description='.urlencode($merchant).'&datetimeFormatted='.urlencode($datetime->format('F j, Y \a\t g:i A')).'&password='.$_GET['password']
-                    ));
                 }
             }
         }

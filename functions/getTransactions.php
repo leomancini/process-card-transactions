@@ -104,6 +104,7 @@
         global $PATH;
 
         $bestMatchLocation = getLocationsForMerchant($transaction['merchant'])[0];
+        
         if (is_null($bestMatchLocation['lists'])) {
             $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
         }

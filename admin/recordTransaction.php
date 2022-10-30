@@ -4,7 +4,13 @@
 
     if ($_GET['password'] !== $SECRETS['PASSWORD']) { die(); }
 
-    $dataFile = fopen($CONFIG['DATA_FILE'], 'a') or die('Unable to open data file!');
+    if ($CONFIG['DEBUG_MODE']) {
+        $dataFilePath = $CONFIG['DEBUG']['DATA_FILE'];
+    } else {
+        $dataFilePath = $CONFIG['DATA_FILE'];
+    }
+    
+    $dataFile = fopen($dataFilePath, 'a') or die('Unable to open data file!');
     $input = $_GET['input']."\n";
     fwrite($dataFile, $input);
     fclose($dataFile);

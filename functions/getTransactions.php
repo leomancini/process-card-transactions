@@ -50,7 +50,13 @@
         global $CONFIG;
         global $PATH;
 
-        $dataFile = file_get_contents($CONFIG['DATA_FILE'], true);
+        if ($CONFIG['DEBUG_MODE']) {
+            $dataFilePath = $CONFIG['DEBUG']['DATA_FILE'];
+        } else {
+            $dataFilePath = $CONFIG['DATA_FILE'];
+        }
+
+        $dataFile = file_get_contents($dataFilePath, true);
         $data = explode("\n", $dataFile);
         $transactions = [];
 

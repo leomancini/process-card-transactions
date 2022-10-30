@@ -82,6 +82,8 @@
         
         mail($to, $subject, $message, $headers);
 
-        file_put_contents($CONFIG['DATA_FILE'], '');
+        if (!$CONFIG['DEBUG_MODE']) {
+            file_put_contents($CONFIG['DATA_FILE'], '');
+        }
     }
 ?>

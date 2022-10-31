@@ -126,6 +126,7 @@
             'amount' => $transaction['amount'],
             'date' => $transaction['datetime']->format('Y-m-d'),
             'time' => $transaction['datetime']->format('G:i'),
+            'datetimeReadable' => $transaction['datetime']->format('F j, Y \a\t g:i A'),
             'card' => $transaction['card'],
             'bestMatchLocation' => $bestMatchLocation,
             'actions' => [

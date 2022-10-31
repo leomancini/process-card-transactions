@@ -91,21 +91,29 @@
 
                 $transaction['datetime']->setTimestamp(strtotime($date.' '.$time));
 
-                $transaction = formatTransaction($transaction);
+                $transaction = cleanMerchantName($transaction);
 
                 if (!in_array(strtoupper($transaction['merchant']), $ignoreMerchants)) {
                     if ($dateFilter) {
                         if ($dateFilter === $datetime->format('Y-m-d')) {
-                            array_push($transactions, $transaction);
+                            array_push($transactions, formatTransaction($transaction));
                         }
                     } else {
-                        array_push($transactions, $transaction);
+                        array_push($transactions, formatTransaction($transaction));
                     }
                 }
             }
         }
         
         return $transactions;
+    }
+
+    function cleanMerchantName($transaction) {
+        $removeFromMerchantName = ['SQ *', 'TST* ', 'PAR*', 'CKE*', 'SNACK* ', 'FH* ', 'IN *'];
+
+        $transaction['merchant'] = str_replace($removeFromMerchantName, '', $transaction['merchant']);
+
+        return $transaction;
     }
 
     function formatTransaction($transaction) {
@@ -116,10 +124,6 @@
         if (is_null($bestMatchLocation['lists'])) {
             $bestMatchLocation['suggestedLists'] = getSuggestedLists($bestMatchLocation);
         }
-
-        $removeFromMerchantName = ['SQ *', 'TST* ', 'PAR*', 'CKE*', 'SNACK* ', 'FH* ', 'IN *'];
-
-        $transaction['merchant'] = str_replace($removeFromMerchantName, '', $transaction['merchant']);
 
         return Array(
             'merchant' => $transaction['merchant'],
